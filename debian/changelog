@@ -1,0 +1,5 @@
+offsite-cert (0.0.0-1) unstable; urgency=medium
+
+  * Initial release (Closes: #nnnn)  <nnnn is the bug number of your ITP>
+
+ -- Holger Böhnke <offsite-cert@biz.amarin.de>  Sun, 01 Oct 2023 14:38:30 +0200

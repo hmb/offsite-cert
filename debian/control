@@ -1,0 +1,15 @@
+Source: offsite-cert
+Section: unknown
+Priority: optional
+Maintainer: Holger Böhnke <offsite-cert@biz.amarin.de>
+Build-Depends: debhelper-compat (= 12)
+Standards-Version: 4.4.1
+Homepage: <insert the upstream URL, if relevant>
+#Vcs-Browser: https://salsa.debian.org/debian/offsite-cert
+#Vcs-Git: https://salsa.debian.org/debian/offsite-cert.git
+
+Package: offsite-cert
+Architecture: all
+Depends: ${misc:Depends}
+Description: <insert up to 60 chars description>
+ <insert long description, indented with spaces>
