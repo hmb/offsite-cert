@@ -1,0 +1,6 @@
+/.debhelper/
+/offsite-cert/
+
+/debhelper-build-stamp
+/files
+/offsite-cert.substvars
