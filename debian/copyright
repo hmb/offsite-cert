@@ -1,11 +1,10 @@
 Format: https://www.debian.org/doc/packaging-manuals/copyright-format/1.0/
 Upstream-Name: offsite-cert
-Upstream-Contact: <preferred name and address to reach the upstream project>
-Source: <url://example.com>
+Upstream-Contact: Holger Böhnke <offsite-cert@biz.amarin.de>
+Source: https://github.com/hmb/offsite-cert
 
 Files: *
-Copyright: <years> <put author's name and email here>
-           <years> <likewise for another author>
+Copyright: 2023 Holger Böhnke <offsite-cert@biz.amarin.de>
 License: AGPL-3.0-or-later
 
 Files: debian/*
@@ -25,12 +24,3 @@ License: AGPL-3.0-or-later
  .
  You should have received a copy of the GNU Affero General Public License
  along with this program. If not, see <https://www.gnu.org/licenses/>.
-
-# Please also look if there are files or directories which have a
-# different copyright/license attached and list them here.
-# Please avoid picking licenses with terms that are more restrictive than the
-# packaged work, as it may make Debian's contributions unacceptable upstream.
-#
-# If you need, there are some extra license texts available in two places:
-#   /usr/share/debhelper/dh_make/licenses/
-#   /usr/share/common-licenses/
