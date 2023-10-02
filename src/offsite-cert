@@ -2,9 +2,13 @@
 
 #set -x
 
+# -------------------------------------------------------
+# initializing
+
 # default config file
 [ -f /etc/offsite-cert/offsite-cert.conf ] && . /etc/offsite-cert/offsite-cert.conf
 
+# init the internal awk programming
 read -r -d '' AWKPRG <<-'EOF'
 	BEGIN {
 	  inCert = 0
@@ -22,6 +26,12 @@ read -r -d '' AWKPRG <<-'EOF'
 	  inCert = 0
 	}
 EOF
+
+# -------------------------------------------------------
+# helper functions
+
+# -------------------------------------------------------
+# worker functions
 
 downloadCert() {
   local connectAddress="$1"
@@ -73,6 +83,9 @@ processDomain() {
 
   return $retval
 }
+
+# -------------------------------------------------------
+# main program
 
 sed -e '/^\s*$/d;/^\s*#/d;$a\' "$CONFIGFILE" | while read CONNECTADDRESS SERVERNAME CERTFILE; do
   echo "----------------------------------------"
