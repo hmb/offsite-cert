@@ -30,6 +30,58 @@ EOF
 # -------------------------------------------------------
 # helper functions
 
+showHelp() {
+  local script_name
+  script_name="$(basename "${0}")"
+
+  cat <<-EOF
+		${script_name} - download ssl certificates from external sites
+
+		Usage: ${script_name} [--help]
+
+		Options:
+		  --help   Show this help
+
+		Use 'man ${script_name}' for more information.
+		EOF
+}
+
+showError() {
+  local error="${1}"
+  local script_name
+  script_name="$(basename "${0}")"
+
+  echo "ERROR: ${error}"
+  echo "run '${script_name} --help' for more information"
+}
+
+processParameters() {
+  while [[ $# -gt 0 ]]; do
+    case "${1}" in
+    --help)
+      showHelp
+      exit 0
+      ;;
+
+    -*)
+      showError "unknown option: ${1}"
+      exit 1
+      ;;
+
+    *)
+      # parameters are position dependent, so leave the loop
+      # and handle them individually
+      break
+      ;;
+    esac
+  done
+
+  if [[ $# -ne 0 ]]; then
+    showError "unknown parameter: ${1}"
+    exit 1
+  fi
+}
+
 # -------------------------------------------------------
 # worker functions
 
@@ -86,6 +138,8 @@ processDomain() {
 
 # -------------------------------------------------------
 # main program
+
+processParameters "$@"
 
 sed -e '/^[[:blank:]]*$/d;/^[[:blank:]]*#/d;$a\' "$DOMAINCONFIGFILE" |
   while read CONNECTADDRESS SERVERNAME CERTFILE; do
