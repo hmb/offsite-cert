@@ -1,5 +1,5 @@
-offsite-cert (0.0.0-1) unstable; urgency=medium
+offsite-cert (0.1.0-1) unstable; urgency=medium
 
-  * TODO: write proper line for Initial release
+  * Initial alpha release
 
- -- Holger Böhnke <offsite-cert@biz.amarin.de>  Sun, 01 Oct 2023 14:38:30 +0200
+ -- Holger Böhnke <offsite-cert@biz.amarin.de>  Sun, 02 Oct 2023 21:53:04 +0200
