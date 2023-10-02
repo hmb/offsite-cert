@@ -1,14 +1,20 @@
-#/bin/bash
+#!/bin/bash
 
-set -x
+#set -x
 
+# -------------------------------------------------------
+# initializing
+
+# default config file
+[ -f /etc/offsite-cert/offsite-cert.conf ] && . /etc/offsite-cert/offsite-cert.conf
+
+# init the internal awk programming
 read -r -d '' AWKPRG <<-'EOF'
 	BEGIN {
 	  inCert = 0
 	}
 
-
-	/-----BEGIN CERTIFICATE-----/ {
+	/^-----BEGIN CERTIFICATE-----/ {
 	  inCert = 1
 	}
 
@@ -16,18 +22,134 @@ read -r -d '' AWKPRG <<-'EOF'
 	  print
 	}
 
-	/-----END CERTIFICATE-----/ {
+	/^-----END CERTIFICATE-----/ {
 	  inCert = 0
 	}
 EOF
 
-DESTCERTFILE=/etc/nginx/ssl.cer/example.com.crt
-TMPCERTFILE=/tmp/example.com.pem
+# -------------------------------------------------------
+# helper functions
 
-openssl s_client -connect example.com:443 -servername www.example.com -showcerts </dev/null 2>/dev/null | awk "$AWKPRG" > "$TMPCERTFILE"
+showHelp() {
+  local script_name
+  script_name="$(basename "${0}")"
 
-if ! diff -q "$DESTCERTFILE" "$TMPCERTFILE" >/dev/null; then
-  mv "$TMPCERTFILE" "$DESTCERTFILE"
-else
-  rm "$TMPCERTFILE"
-fi
+  cat <<-EOF
+		${script_name} - download ssl certificates from external sites
+
+		Usage: ${script_name} [--help]
+
+		Options:
+		  --help   Show this help
+
+		Use 'man ${script_name}' for more information.
+		EOF
+}
+
+showError() {
+  local error="${1}"
+  local script_name
+  script_name="$(basename "${0}")"
+
+  echo "ERROR: ${error}"
+  echo "run '${script_name} --help' for more information"
+}
+
+processParameters() {
+  while [[ $# -gt 0 ]]; do
+    case "${1}" in
+    --help)
+      showHelp
+      exit 0
+      ;;
+
+    -*)
+      showError "unknown option: ${1}"
+      exit 1
+      ;;
+
+    *)
+      # parameters are position dependent, so leave the loop
+      # and handle them individually
+      break
+      ;;
+    esac
+  done
+
+  if [[ $# -ne 0 ]]; then
+    showError "unknown parameter: ${1}"
+    exit 1
+  fi
+}
+
+# -------------------------------------------------------
+# worker functions
+
+downloadCert() {
+  local connectAddress="$1"
+  local serverName="$2"
+  local certFile="$3"
+  local tmpDownloadFile="$4"
+  local tmpCertFile="$5"
+
+  if ! openssl s_client -connect "$connectAddress" -servername "$serverName" -showcerts </dev/null 2>/dev/null >"$tmpDownloadFile"; then
+    echo "ERROR: download failed"
+    return 1
+  fi
+
+  if ! awk "$AWKPRG" <"$tmpDownloadFile" >"$tmpCertFile"; then
+    echo "ERROR: cert extraction failed"
+    return 1
+  fi
+
+  if [ -f "$certFile" ] && diff -q "$tmpCertFile" "$certFile" >/dev/null; then
+    echo "SUCCESS: the certificate has not changed"
+    return 0
+  fi
+
+  if ! cp "$tmpCertFile" "$certFile"; then
+    echo "ERROR: copy of new certificate to destination failed"
+    return 1
+  fi
+
+  echo "SUCCESS: the new certificate was copied to its destination"
+  return 0
+}
+
+processDomain() {
+  local connectAddress="$1"
+  local serverName="$2"
+  local certFile="$3"
+  local tmpDownloadFile
+  local tmpCertFile
+  local retval
+
+  tmpDownloadFile=$(mktemp) || exit
+  tmpCertFile=$(mktemp) || exit
+
+  downloadCert "$connectAddress" "$serverName" "$certFile" "$tmpDownloadFile" "$tmpCertFile"
+  retval=$?
+
+  rm "$tmpDownloadFile"
+  rm "$tmpCertFile"
+
+  return $retval
+}
+
+# -------------------------------------------------------
+# main program
+
+processParameters "$@"
+
+sed -e '/^[[:blank:]]*$/d;/^[[:blank:]]*#/d;$a\' "$DOMAINCONFIGFILE" |
+  while read CONNECTADDRESS SERVERNAME CERTFILE; do
+    echo "----------------------------------------"
+    echo "CONNECTADDRESS: $CONNECTADDRESS"
+    echo "SERVERNAME    : $SERVERNAME"
+    echo "CERTFILE      : $CERTFILE"
+    if processDomain "$CONNECTADDRESS" "$SERVERNAME" "$CERTFILE"; then
+      echo "success for domain: $SERVERNAME"
+    else
+      echo "failure for domain: $SERVERNAME"
+    fi
+  done
