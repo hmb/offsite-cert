@@ -1,0 +1,102 @@
+.TH offsite-cert 8  "Mon, 02 Oct 2023 16:23:26 +0200" "Version 1.0" "System management commands"
+
+.SH NAME
+
+offsite-cert \- download ssl certificates from external sites
+
+.SH SYNOPSIS
+
+.B offsite-cert
+[\fB\-\-help\fR]
+
+.SH DESCRIPTION
+
+Sometimes an internal site - a site not reachable from the public internet -
+still needs a LetsEncrypt certificate. Being internal prevents it from using
+the
+.B well-known uri
+method for domain validation. It cannot place a file that can be verified by
+LetsEncrypt on its site. Under normal circumstances the
+.B dns
+method could be used for such purposes. But that's not always feasible as
+many dns providers cannot restrict their credentials to a specific domain.
+Giving the providers credentials to the internal site would enable it to
+manipulate many other domains. Here
+.B offsite-cert
+come to the rescue and delegates the certificate retrieval to an external
+website.
+.PP
+
+This external website must be reachable from the public internet. It therefore
+can use the
+.B well-known uri
+method of LetsEncrypt and does not need credentials for a dns provider.
+The external website must have a public dns record point to its server. It then
+can use one of the multitude of LetsEncrypt clients to get a certificate. This
+is basically just a standard setup like for many of the myriad webservers on the
+web. The certificate and its chain of signers are then delivered with every call
+to the external site.
+.PP
+
+.B offsite-cert
+uses standard openssl tools to retrieve the certificate file and place it
+on the internal site. The internal site now takes advantage of the standard
+LetsEncrypt certificate, without having either, a public exposure or access to
+the dns.
+.PP
+
+Of course there's some additional configuration needed for this setup. First of
+all two different dns records must be provided, depending on the location of the
+dns client. Any client on the public internet must get the address of the proxy
+webserver that takes care of retrieving the LetsEncrypt certificate. Any client
+on the internal network must get the address of the internal server. E.g.:
+.PP
+
+.RS
+ \- 1.2.3.4        # public address
+ \- 192.168.0.10   # internal address
+.RE
+.PP
+
+Secondly the private key of the external webserver must be copied over manually
+to the internal webserver. That's because the internal server needs the private
+key that matches the certificate retrieved by
+.BR offsite-cert .
+As the private key is the
+.I crown jewel
+of any encryption, this process is not automated by now. In any case the admin
+has to take care that the private key is installed correctly on the internal
+webserver and not leaked to untrusted parties.
+.PP
+
+.B offsite-cert
+is usually meant to run on a server being invoked by a cron job. It can however
+be invoked manually as well. This might be for testing the setup or initializing
+any new domains.
+
+.SH OPTIONS
+
+.TP
+.B \-\-help
+Show a small help text and exit the program with EXIT STATUS zero.
+
+.SH FILES
+
+.TP
+/etc/offsite-cert/offsite-cert.conf
+General configuration file. See the file itself for possible options.
+
+.TP
+/etc/offsite-cert/domains
+List of domain certificates to retrieve. See the file itself for how it has to
+be formatted.
+
+.SH EXIT STATUS
+
+.B offsite-cert
+returns an exit status of zero (0) if it ran successfully otherwise it the
+exit status is bigger than zero.
+
+.SH AUTHOR
+
+Holger Böhnke (offsite-cert@biz.amarin.de)
