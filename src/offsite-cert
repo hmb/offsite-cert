@@ -2,8 +2,8 @@
 
 #set -x
 
-#CONFIGFILE=/etc/offsite-cert/domains
-CONFIGFILE=conf/domains
+# default config file
+[ -f /etc/offsite-cert/offsite-cert.conf ] && . /etc/offsite-cert/offsite-cert.conf
 
 read -r -d '' AWKPRG <<-'EOF'
 	BEGIN {
