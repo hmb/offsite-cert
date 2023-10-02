@@ -1,0 +1,25 @@
+# This is the offsite-cert configuration file
+#
+# Empty lines, lines containing whitespace only and lines starting with a '#'
+# as first non-whitespace are ignored. All other lines shall have 3 space or
+# tab separated record containing:
+#
+# <server:port> <target domain> <destination file>
+#
+# <server:port>     is the server to connect to. This server usually is a
+#                   webserver that serves the target domain.
+# <target domain>   is the domain whose certificate is to be retrieved. In many
+#                   cases that will be the same as the server in <server:port>.
+#                   In case the <server> serves the <target domain>, but the
+#                   <target domain>s IP is different from the <server>s IP,
+#                   offsite-cert will contact the <server>s IP but still get the
+#                   certificate of the <target domain>.
+# <destination file> is the file location where the downloaded certificate is
+#                   copied to. The certificate will only be copied, if it either
+#                   is not present at the destination or its content has
+#                   changed.
+#
+# Examples:
+# example.com:443   example.com         /etc/nginx/ssl.cer/example.com.crt
+# example.com:443   www.example.com     /etc/nginx/ssl.cer/www.example.com.crt
+#
