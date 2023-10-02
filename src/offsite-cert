@@ -87,14 +87,15 @@ processDomain() {
 # -------------------------------------------------------
 # main program
 
-sed -e '/^\s*$/d;/^\s*#/d;$a\' "$CONFIGFILE" | while read CONNECTADDRESS SERVERNAME CERTFILE; do
-  echo "----------------------------------------"
-  echo "CONNECTADDRESS: $CONNECTADDRESS"
-  echo "SERVERNAME    : $SERVERNAME"
-  echo "CERTFILE      : $CERTFILE"
-  if processDomain "$CONNECTADDRESS" "$SERVERNAME" "$CERTFILE"; then
-    echo "success for domain: $SERVERNAME"
-  else
-    echo "failure for domain: $SERVERNAME"
-  fi
-done
+sed -e '/^[[:blank:]]*$/d;/^[[:blank:]]*#/d;$a\' "$DOMAINCONFIGFILE" |
+  while read CONNECTADDRESS SERVERNAME CERTFILE; do
+    echo "----------------------------------------"
+    echo "CONNECTADDRESS: $CONNECTADDRESS"
+    echo "SERVERNAME    : $SERVERNAME"
+    echo "CERTFILE      : $CERTFILE"
+    if processDomain "$CONNECTADDRESS" "$SERVERNAME" "$CERTFILE"; then
+      echo "success for domain: $SERVERNAME"
+    else
+      echo "failure for domain: $SERVERNAME"
+    fi
+  done
