@@ -1,4 +1,4 @@
-# This is the offsite-cert configuration file
+# This is the offsite-cert domain configuration file
 #
 # Empty lines, lines containing whitespace only and lines starting with a '#'
 # as first non-whitespace are ignored. All other lines shall have 3 space or
