@@ -1,3 +1,9 @@
+offsite-cert (0.9.0-1) unstable; urgency=medium
+
+  * Initial beta release
+
+ -- Holger Böhnke <offsite-cert@biz.amarin.de>  Tue, 03 Oct 2023 22:31:58 +0200
+
 offsite-cert (0.1.0-1) unstable; urgency=medium
 
   * Initial alpha release
