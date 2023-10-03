@@ -1,5 +1,6 @@
-all:
-	@echo "possible targets: install, clean"
+build:
+	mkdir -p build
+	sed -e '/^[[:blank:]]*$$/d;$$a\' doc/offsite-cert.man > build/offsite-cert.man
 
 install:
 	install -d $(DESTDIR)/etc/offsite-cert/
@@ -10,6 +11,6 @@ install:
 #	install -d $(DESTDIR)/var/lib/offsite-cert/
 
 clean:
-	@echo "scripting only, nothing to do"
+	rm -rf build
 
 .PHONY: all install clean
