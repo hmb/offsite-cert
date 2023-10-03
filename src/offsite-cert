@@ -56,11 +56,19 @@ showError() {
 }
 
 processParameters() {
+  testMode=0
+
   while [[ $# -gt 0 ]]; do
     case "${1}" in
     --help)
       showHelp
+      shift
       exit 0
+      ;;
+
+    --test)
+      testMode=1
+      shift
       ;;
 
     -*)
@@ -160,8 +168,15 @@ processDomainConfigFile() {
     processDomains
 }
 
+run() {
+  processDomainConfigFile
+}
+
 # -------------------------------------------------------
 # main program
 
 processParameters "$@"
-processDomainConfigFile
+
+if [ "$testMode" == 0 ]; then
+  run
+fi
