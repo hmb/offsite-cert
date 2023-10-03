@@ -1,0 +1,36 @@
+#!/bin/bash
+
+if [ ! -f src/offsite-cert ]; then
+  echo "could not source 'offsite-cert' main program"
+  exit 1
+fi
+
+. src/offsite-cert --test
+
+# shellcheck disable=SC2034
+DOMAINCONFIGFILE=test/config/domain-syntax
+
+processDomains() {
+  cat
+}
+
+read -r -d '' EXPECTED_RESULT <<-'EOF'
+	non empty line 1
+	non empty line 2
+	 non empty line 3, indented
+	   non empty line 4, indented even more
+	line without newline at the end
+EOF
+
+RESULT=$(processDomainConfigFile)
+
+if [ "$EXPECTED_RESULT" != "$RESULT" ]; then
+  echo "FAILED"
+  echo "expected result:"
+  echo "$EXPECTED_RESULT"
+  echo "result:"
+  echo "$RESULT"
+  exit 1
+fi
+
+echo "SUCCESS"
