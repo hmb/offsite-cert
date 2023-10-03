@@ -138,7 +138,7 @@ processDomain() {
 
 processDomains() {
   sed -e '/^[[:blank:]]*$/d;/^[[:blank:]]*#/d;$a\' "$DOMAINCONFIGFILE" |
-    while read CONNECTADDRESS SERVERNAME CERTFILE; do
+    while read -r CONNECTADDRESS SERVERNAME CERTFILE; do
       echo "----------------------------------------"
       echo "CONNECTADDRESS: $CONNECTADDRESS"
       echo "SERVERNAME    : $SERVERNAME"
