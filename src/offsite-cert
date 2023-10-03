@@ -136,20 +136,23 @@ processDomain() {
   return $retval
 }
 
+processDomains() {
+  sed -e '/^[[:blank:]]*$/d;/^[[:blank:]]*#/d;$a\' "$DOMAINCONFIGFILE" |
+    while read CONNECTADDRESS SERVERNAME CERTFILE; do
+      echo "----------------------------------------"
+      echo "CONNECTADDRESS: $CONNECTADDRESS"
+      echo "SERVERNAME    : $SERVERNAME"
+      echo "CERTFILE      : $CERTFILE"
+      if processDomain "$CONNECTADDRESS" "$SERVERNAME" "$CERTFILE"; then
+        echo "success for domain: $SERVERNAME"
+      else
+        echo "failure for domain: $SERVERNAME"
+      fi
+    done
+}
+
 # -------------------------------------------------------
 # main program
 
 processParameters "$@"
-
-sed -e '/^[[:blank:]]*$/d;/^[[:blank:]]*#/d;$a\' "$DOMAINCONFIGFILE" |
-  while read CONNECTADDRESS SERVERNAME CERTFILE; do
-    echo "----------------------------------------"
-    echo "CONNECTADDRESS: $CONNECTADDRESS"
-    echo "SERVERNAME    : $SERVERNAME"
-    echo "CERTFILE      : $CERTFILE"
-    if processDomain "$CONNECTADDRESS" "$SERVERNAME" "$CERTFILE"; then
-      echo "success for domain: $SERVERNAME"
-    else
-      echo "failure for domain: $SERVERNAME"
-    fi
-  done
+processDomains
