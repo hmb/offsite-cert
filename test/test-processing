@@ -1,0 +1,40 @@
+#!/bin/bash
+
+#set -x
+
+if [ ! -f src/offsite-cert ]; then
+  echo "could not source 'offsite-cert' main program"
+  exit 1
+fi
+
+. src/offsite-cert --test
+
+TMPDIR=test/tmp
+mkdir "$TMPDIR"
+trap 'rm -r $TMPDIR' EXIT
+
+processDomains <<-EOF
+	example.com:443   example.com         $TMPDIR/example.com.crt
+	example.com:443   www.example.com     $TMPDIR/www.example.com.crt
+EOF
+
+retval=0
+
+if [[ ! -f "$TMPDIR/example.com.crt" ]]; then
+  echo "FAILED"
+  echo "file $TMPDIR/example.com.crt does not exist"
+  retval=1
+fi
+
+# TODO check content of cert with
+#openssl x509 -in test/tmp/example.com.crt -noout -text
+
+if [[ ! -f "$TMPDIR/www.example.com.crt" ]]; then
+  echo "FAILED"
+  echo "file $TMPDIR/www.example.com.crt does not exist"
+  retval=1
+fi
+
+[ $retval == 0 ] && echo "SUCCESS"
+
+exit $retval
