@@ -2,6 +2,10 @@ build:
 	mkdir -p build
 	sed -e '/^[[:blank:]]*$$/d;$$a\' doc/offsite-cert.man > build/offsite-cert.man
 
+test:
+	test/test-domain-file-cleanup
+	test/test-processing
+
 install:
 	install -d $(DESTDIR)/etc/offsite-cert/
 	install -m 640 conf/offsite-cert.conf $(DESTDIR)/etc/offsite-cert/
@@ -13,4 +17,4 @@ install:
 clean:
 	rm -rf build
 
-.PHONY: all install clean
+.PHONY: build test install clean

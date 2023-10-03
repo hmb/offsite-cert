@@ -1,0 +1,15 @@
+# This is the offsite-cert domain configuration file
+#
+# Empty lines, lines containing whitespace only and lines starting with a '#'
+# as first non-whitespace are ignored. All other lines shall have 3 space or
+non empty line 1
+
+
+# tab separated record containing:
+non empty line 2
+
+ non empty line 3, indented
+
+   non empty line 4, indented even more
+
+line without newline at the end

@@ -56,11 +56,19 @@ showError() {
 }
 
 processParameters() {
+  testMode=0
+
   while [[ $# -gt 0 ]]; do
     case "${1}" in
     --help)
       showHelp
+      shift
       exit 0
+      ;;
+
+    --test)
+      testMode=1
+      shift
       ;;
 
     -*)
@@ -137,22 +145,38 @@ processDomain() {
 }
 
 processDomains() {
+  local retval=0
+
+  while read -r CONNECTADDRESS SERVERNAME CERTFILE; do
+    echo "----------------------------------------"
+    echo "CONNECTADDRESS: $CONNECTADDRESS"
+    echo "SERVERNAME    : $SERVERNAME"
+    echo "CERTFILE      : $CERTFILE"
+    if processDomain "$CONNECTADDRESS" "$SERVERNAME" "$CERTFILE"; then
+      echo "success for domain: $SERVERNAME"
+    else
+      echo "failure for domain: $SERVERNAME"
+      retval=1
+    fi
+  done
+
+  return $retval
+}
+
+processDomainConfigFile() {
   sed -e '/^[[:blank:]]*$/d;/^[[:blank:]]*#/d;$a\' "$DOMAINCONFIGFILE" |
-    while read -r CONNECTADDRESS SERVERNAME CERTFILE; do
-      echo "----------------------------------------"
-      echo "CONNECTADDRESS: $CONNECTADDRESS"
-      echo "SERVERNAME    : $SERVERNAME"
-      echo "CERTFILE      : $CERTFILE"
-      if processDomain "$CONNECTADDRESS" "$SERVERNAME" "$CERTFILE"; then
-        echo "success for domain: $SERVERNAME"
-      else
-        echo "failure for domain: $SERVERNAME"
-      fi
-    done
+    processDomains
+}
+
+run() {
+  processDomainConfigFile
 }
 
 # -------------------------------------------------------
 # main program
 
 processParameters "$@"
-processDomains
+
+if [ "$testMode" == 0 ]; then
+  run
+fi
