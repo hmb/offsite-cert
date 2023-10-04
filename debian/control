@@ -10,6 +10,20 @@ Vcs-Git: https://github.com/hmb/offsite-cert.git
 
 Package: offsite-cert
 Architecture: all
-Depends: ${misc:Depends}
-Description: Download certificates from online sites for offline use.
- TODO: Elaborate on "Download certificates from online sites for offline use".
+Depends: ${misc:Depends}, bash, openssl, awk, sed
+Description: Download certificates from public sites for use on private sites.
+ Sometimes a LetsEncrypt certificate is desired to be deployed in a private
+ environment, like an office or home use for servers that are not publicly
+ reachable. Due to the private nature of the server, LetsEncrypt cannot validate
+ the domain using the 'well-known' file mechanism. In cases where DNS validation
+ is not an option offsite-cert could be helpful.
+ .
+ The offsite-cert program just downloads the LetsEncrypt certificate from a
+ publicly reachable server, that itself just uses one of the standard ways of
+ retrieving a LetsEncrypt certificate. Offsite-cert extracts the certificate
+ from the standard SSL communication and therefore does not need any special
+ access to the public server. The only step needed is that the server admin has
+ to copy the LetsEncrypt private key during setup time from the public server to
+ the private server. From then on only the regenerated certificates are needed.
+ .
+ See the manpage for installation details.
