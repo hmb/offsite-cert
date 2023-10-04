@@ -10,7 +10,7 @@ Vcs-Git: https://github.com/hmb/offsite-cert.git
 
 Package: offsite-cert
 Architecture: all
-Depends: ${misc:Depends}, bash, openssl, awk, sed
+Depends: ${misc:Depends}, openssl
 Description: Download certificates from public sites for use on private sites.
  Sometimes a LetsEncrypt certificate is desired to be deployed in a private
  environment, like an office or home use for servers that are not publicly
