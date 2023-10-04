@@ -2,7 +2,7 @@
 #
 # Empty lines, lines containing whitespace only and lines starting with a '#'
 # as first non-whitespace are ignored. All other lines shall have 3 space or
-# tab separated record containing:
+# tab separated records containing:
 #
 # <server:port> <target domain> <destination file>
 #
@@ -22,4 +22,3 @@
 # Examples:
 # example.com:443   example.com         /etc/nginx/ssl.cer/example.com.crt
 # example.com:443   www.example.com     /etc/nginx/ssl.cer/www.example.com.crt
-#
