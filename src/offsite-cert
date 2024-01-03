@@ -97,8 +97,9 @@ downloadCert() {
   local connectAddress="$1"
   local serverName="$2"
   local certFile="$3"
-  local tmpDownloadFile="$4"
-  local tmpCertFile="$5"
+  local tmpDir="$4"
+  local tmpDownloadFile="${tmpDir}/download"
+  local tmpCertFile="${tmpDir}/certificate"
 
   if ! openssl s_client -connect "$connectAddress" -servername "$serverName" -showcerts </dev/null 2>/dev/null >"$tmpDownloadFile"; then
     echo "ERROR: download failed"
@@ -110,7 +111,7 @@ downloadCert() {
     return 1
   fi
 
-  if [ -f "$certFile" ] && diff -q "$tmpCertFile" "$certFile" >/dev/null; then
+  if [[ -f "$certFile" ]] && diff -q "$tmpCertFile" "$certFile" >/dev/null; then
     echo "SUCCESS: the certificate has not changed"
     return 0
   fi
@@ -128,18 +129,15 @@ processDomain() {
   local connectAddress="$1"
   local serverName="$2"
   local certFile="$3"
-  local tmpDownloadFile
-  local tmpCertFile
+  local tmpDir
   local retval
 
-  tmpDownloadFile=$(mktemp) || exit
-  tmpCertFile=$(mktemp) || exit
+  tmpDir=$(mktemp -d) || exit
 
-  downloadCert "$connectAddress" "$serverName" "$certFile" "$tmpDownloadFile" "$tmpCertFile"
+  downloadCert "$connectAddress" "$serverName" "$certFile" "$tmpDir"
   retval=$?
 
-  rm "$tmpDownloadFile"
-  rm "$tmpCertFile"
+  rm -r "$tmpDir"
 
   return $retval
 }
